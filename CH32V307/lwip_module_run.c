@@ -11,6 +11,7 @@
 
 #include "ping.h"
 #include "eth_driver.h"
+#include "tcpecho_raw.h"
 
 //注册函数
 extern err_t ethernetif_init(struct netif *netif);
@@ -121,5 +122,8 @@ void lwip_module_run(void){
         //ping_init(&pingip);
         //ping_send_now();
         ping_flag = 1;
+
+        //借助这里初始化下
+        tcpecho_raw_init();
     }
 }

@@ -153,6 +153,7 @@ netconn_new_with_proto_and_callback(enum netconn_type t, u8_t proto, netconn_cal
   API_MSG_VAR_ALLOC_RETURN_NULL(msg);
 
   conn = netconn_alloc(t, callback);
+
   if (conn != NULL) {
     err_t err;
 

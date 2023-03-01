@@ -746,7 +746,7 @@ netconn_alloc(enum netconn_type t, netconn_callback callback)
   }
 
   if (sys_mbox_new(&conn->recvmbox, size) != ERR_OK) {
-    goto free_and_return;
+      goto free_and_return;
   }
 #if !LWIP_NETCONN_SEM_PER_THREAD
   if (sys_sem_new(&conn->op_completed, 0) != ERR_OK) {

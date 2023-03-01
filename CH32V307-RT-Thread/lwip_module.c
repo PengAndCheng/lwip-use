@@ -52,18 +52,9 @@ void tcpip_init_done_callback(void *arg){
     netif_set_up(&net);
 }
 
-void ttest(void *p){
-    while(1){
-        printf("ttest.\r\n");
-        rt_thread_mdelay(1000);
-    }
-}
-
 void lwip_module_init(void){
     ///参数1初始化完成回调函数 参数2初始化完成回调参数
     tcpip_init(tcpip_init_done_callback,0);
-
-    //sys_thread_new("ttest", ttest, NULL, 512, 5);
 }
 
 void lwip_module_poll(void){
@@ -75,7 +66,7 @@ void lwip_module_poll(void){
         f->length=0;
         uint8_t *recv_ptr = (uint8_t *)f->buffer;
 
-        #if 1
+        #if 0
         int i;
         printf("receive counter:%d.\n",ETH->MMCRGUFCR);
         printf("read_length:%d\n",recv_length);
@@ -91,23 +82,15 @@ void lwip_module_poll(void){
         printf("END!\n\n");
         #endif
 
-        //进行地址过滤 先不找MAC硬件过滤的方法了，先快速成型
-        extern uint8_t *hwaddr_get(void);
-        uint8_t* hwaddr = hwaddr_get();
-        int hwaddr_cnt = 0;
-        int FF_cnt = 0;
-        for (int i = 0; i < 6; ++i) {
-            if (recv_ptr[i] == hwaddr[i]) {
-                hwaddr_cnt++;
-            }
-            if (recv_ptr[i] == 0xff) {
-                FF_cnt++;
-            }
-        }
-        if (hwaddr_cnt == 6 || FF_cnt == 6) {
-            extern void ethernetif_input_cb(uint8_t* data, int len);
-            ethernetif_input_cb(recv_ptr,recv_length);
-        }
+        extern void ethernetif_input_cb(uint8_t* data, int len);
+        ethernetif_input_cb(recv_ptr,recv_length);
         f->length = 0;
+    }
+
+    static int net_link_frist = 0;
+    if (net_link_frist == 0 && net_link == 1) {
+        net_link_frist = 1;
+        extern void tcpecho_init(void);
+        tcpecho_init();
     }
 }
